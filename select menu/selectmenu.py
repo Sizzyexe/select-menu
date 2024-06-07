@@ -1,7 +1,8 @@
 
+from email import message
 import discord
 from discord.ui import Modal, InputText, View, button
-from discord.ext.pages import Page, Paginator
+from discord.ext.pages import Page, Paginator, PageGroup
 import os
 
 
@@ -10,18 +11,29 @@ load_dotenv()
 
 
 
+
 bot = discord.Bot(debug_guilds=[int(os.getenv("GUILD_ID"))])
 
 
-pages = [
-     Page(
-          content="Sosal?",
-          embeds=[
-               discord.Embed(title="Mamy Ego", description="opisaniye")
-          ]
-     )
-]
 
+
+pages = [
+    PageGroup(
+        pages=[
+            Page(content="1"),
+            Page(content="2"),
+        ],
+        label="Group 1"
+    ),
+    PageGroup(
+        pages=[
+            Page(content="3"),
+            Page(content="4"),
+            Page(content="5"),
+        ],
+        label="Group 2"
+    )
+]   
 
 class SurveyModal(Modal):
     def __init__(self, *args, **kwargs):
@@ -72,29 +84,44 @@ class SurveyModal(Modal):
 
             name, exp, fams, benefit, fight = map(lambda x: x.value, self.children)
             
-                        
             await intercation.response.send_message(f"**Ваш ник | Статик | Имя:** ```{name}``` **Ваш опыт и онлайн:** ```{exp}``` **В каких семьях вы были:** ```{fams}``` **Почему именно наша семья:** ```{benefit}``` **Ваши навыки стрельбы:** ```{fight}```")
+  
 
+        
 
+# @bot.command()
+# async def showcase(ctx: discord.ApplicationContext):
+#      pagesManager = Paginator(
+#           pages=pages,
+#           show_disabled=False,
+#           show_menu=True,
 
+#      )
+#      await pagesManager.respond(
+#           ctx.interaction,
+#           target=bot.get_channel(1248728288470368418)
+#    )
 
 class MyView(View):
             
         @button(label="Подать заявку в семью", style=discord.ButtonStyle.green, emoji="📋")
         async def callback(self, button: discord.ui.Button, interaction: discord.Interaction):
             await interaction.response.send_modal(SurveyModal())
-
-
-
+        
 @bot.command()
 async def application(ctx: discord.ApplicationContext):
-     pagesmanager=Paginator
-     
      await ctx.respond("https://tenor.com/view/%D1%81-%D0%B4%D0%BD%D0%B5%D0%BC-%D1%80%D0%BE%D0%B6%D0%B4%D0%B5%D0%BD%D0%B8%D1%8F-gif-1024174821354942547", view=MyView())
-     await pagesmanager.respond(
-          ctx.interaction,
-          target=bot.get_channel(1248707562862280795)
-     )
+async def showcase(ctx: discord.ApplicationContext):
+            pagesManager = Paginator(
+                pages=pages,
+                show_disabled=False,
+                show_menu=True,
+            )
+
+            await pagesManager.respond(
+            ctx.interaction,
+            target=bot.get_channel(1248728288470368418)
+        )         
 
      
        
